@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  skillhub:
+    image: node:20-alpine
+    container_name: skillhub
+    working_dir: /app
+    volumes:
+      - .:/app
+      - skillhub_data:/app/data
+    ports:
+      - "17890:17890"
+    environment:
+      - PORT=17890
+      - API_KEY=skillhub-secret-key
+    command: sh -c "npm install && npm start"
+    restart: unless-stopped
+
+volumes:
+  skillhub_data:

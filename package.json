@@ -1,0 +1,26 @@
+{
+  "name": "agile-skill-hub",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test:api": "node --test tests/api.integration.test.js",
+    "test:e2e": "playwright test",
+    "test": "npm run test:api && npm run test:e2e"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "multer": "^2.1.0",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "supertest": "^7.2.2"
+  }
+}

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agile Skill Hub Admin</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --text: #101828;
+      --muted: #667085;
+      --border: #e4e7ec;
+      --primary: #3b82f6;
+      --success: #16a34a;
+      --danger: #ef4444;
+      --shadow: 0 8px 30px rgba(16, 24, 40, 0.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(180deg, #f7f9ff 0%, var(--bg) 100%);
+      color: var(--text);
+      padding: 28px;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.2;
+    }
+
+    .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 10px;
+      max-width: 640px;
+    }
+
+    input[type="text"],
+    textarea,
+    input[type="file"] {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    .btn-primary { background: var(--primary); }
+    .btn-success { background: var(--success); }
+    .btn-danger { background: var(--danger); }
+
+    .skill-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .skill-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      background: #fff;
+    }
+
+    .skill-title {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .skill-meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 14px; }
+      .row, .skill-card { grid-template-columns: 1fr; }
+      .actions { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Agile Skill Hub 管理后台</h1>
+      <div class="sub">内网私有 Skill 仓库 · 上传 / 查看 / 下载 / 删除</div>
+    </div>
+
+    <div class="panel">
+      <h2>API Key 配置</h2>
+      <div class="row">
+        <input type="text" id="apiKey" placeholder="输入 X-API-Key">
+        <button class="btn-success" onclick="saveApiKey()">保存并刷新</button>
+      </div>
+      <div class="hint">Key 会保存在浏览器本地 localStorage。</div>
+    </div>
+
+    <div class="panel">
+      <h2>上传新 Skill</h2>
+      <div class="form-grid">
+        <input type="text" id="skillName" placeholder="Skill 名称（可选）">
+        <textarea id="skillDescription" placeholder="Skill 描述（可选）" rows="3"></textarea>
+        <input type="file" id="skillFile" accept=".skill,.zip">
+        <div class="actions">
+          <button class="btn-primary" onclick="uploadSkill()">上传 Skill</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>已上传 Skills</h2>
+      <div id="skillsContainer" class="skill-list"></div>
+    </div>
+  </div>
+
+  <script>
+    let apiKey = localStorage.getItem('skillhub_api_key') || '';
+    document.getElementById('apiKey').value = apiKey;
+
+    function saveApiKey() {
+      apiKey = document.getElementById('apiKey').value.trim();
+      localStorage.setItem('skillhub_api_key', apiKey);
+      loadSkills();
+    }
+
+    async function loadSkills() {
+      const container = document.getElementById('skillsContainer');
+      if (!apiKey) {
+        container.innerHTML = '<p class="hint">请先填写并保存 API Key。</p>';
+        return;
+      }
+      try {
+        const res = await fetch('/api/skills', { headers: { 'X-API-Key': apiKey } });
+        if (!res.ok) throw new Error('加载失败（请检查 API Key）');
+        const skills = await res.json();
+
+        if (!skills.length) {
+          container.innerHTML = '<p class="hint">暂时没有上传的 Skill。</p>';
+          return;
+        }
+
+        container.innerHTML = skills.map(skill => `
+          <div class="skill-card">
+            <div>
+              <h3 class="skill-title">${skill.name}</h3>
+              <p class="skill-meta">${skill.description || '无描述'}</p>
+              <p class="skill-meta">上传时间：${new Date(skill.uploadedAt).toLocaleString()} · 大小：${Math.ceil((skill.size || 0) / 1024)} KB</p>
+            </div>
+            <div class="actions">
+              <button class="btn-success" onclick="downloadSkill('${skill.id}')">下载</button>
+              <button class="btn-danger" onclick="deleteSkill('${skill.id}')">删除</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        container.innerHTML = '<p style="color:#ef4444">' + err.message + '</p>';
+      }
+    }
+
+    async function uploadSkill() {
+      const name = document.getElementById('skillName').value.trim();
+      const description = document.getElementById('skillDescription').value.trim();
+      const fileInput = document.getElementById('skillFile');
+      const file = fileInput.files[0];
+
+      if (!apiKey) return alert('请先填写 API Key');
+      if (!file) return alert('请选择文件');
+
+      const formData = new FormData();
+      formData.append('file', file);
+      if (name) formData.append('name', name);
+      if (description) formData.append('description', description);
+
+      try {
+        const res = await fetch('/api/skills/upload', {
+          method: 'POST',
+          headers: { 'X-API-Key': apiKey },
+          body: formData
+        });
+        if (!res.ok) throw new Error('上传失败');
+        alert('上传成功');
+        document.getElementById('skillName').value = '';
+        document.getElementById('skillDescription').value = '';
+        fileInput.value = '';
+        loadSkills();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    async function downloadSkill(id) {
+      try {
+        const res = await fetch(`/api/skills/${id}/download`, { headers: { 'X-API-Key': apiKey } });
+        if (!res.ok) throw new Error('下载失败');
+        const blob = await res.blob();
+        const contentDisposition = res.headers.get('Content-Disposition') || '';
+        const match = contentDisposition.match(/filename="?([^\"]+)"?/);
+        const filename = match ? match[1] : 'skill.skill';
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    async function deleteSkill(id) {
+      if (!confirm('确定删除这个 Skill 吗？')) return;
+      try {
+        const res = await fetch(`/api/skills/${id}`, {
+          method: 'DELETE',
+          headers: { 'X-API-Key': apiKey }
+        });
+        if (!res.ok) throw new Error('删除失败');
+        loadSkills();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    loadSkills();
+  </script>
+</body>
+</html>

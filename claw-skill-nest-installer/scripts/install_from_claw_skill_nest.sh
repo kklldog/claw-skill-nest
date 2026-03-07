@@ -29,7 +29,7 @@ case "$command" in
     curl -s -H "X-API-Key: $SKILLHUB_API_KEY" -o "$temp_file" "$SKILLHUB_URL/api/skills/$skill_id/download"
     
     if [ -s "$temp_file" ]; then
-      if echo "$temp_file" | grep -q "\.zip$"; then
+      if command -v unzip >/dev/null 2>&1 && unzip -t "$temp_file" >/dev/null 2>&1; then
         unzip -o "$temp_file" -d "$skill_dir"
       else
         cp "$temp_file" "$skill_dir/"

@@ -19,6 +19,11 @@
 - `从本地 claw-skill-nest 安装 <name>`
 - `从 local claw-skill-nest 更新 <name>`
 
+## 脚本入口
+
+- Linux/macOS: `scripts/install_from_claw_skill_nest.sh`
+- Windows (PowerShell): `scripts/install_from_claw_skill_nest.ps1`
+
 ## 安装位置
 
 Skills 将安装到 `~/.openclaw/workspace/skills/<name>`

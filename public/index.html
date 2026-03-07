@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agile Skill Hub Admin</title>
+  <title>Claw Skill Nest Admin</title>
   <style>
     :root {
       --bg: #f4f6fb;
@@ -162,7 +162,7 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>Agile Skill Hub 管理后台</h1>
+      <h1>Claw Skill Nest 管理后台</h1>
       <div class="sub">内网私有 Skill 仓库 · 上传 / 查看 / 下载 / 删除</div>
     </div>
 
@@ -194,12 +194,12 @@
   </div>
 
   <script>
-    let apiKey = localStorage.getItem('skillhub_api_key') || '';
+    let apiKey = localStorage.getItem('claw-skill-nest_api_key') || '';
     document.getElementById('apiKey').value = apiKey;
 
     function saveApiKey() {
       apiKey = document.getElementById('apiKey').value.trim();
-      localStorage.setItem('skillhub_api_key', apiKey);
+      localStorage.setItem('claw-skill-nest_api_key', apiKey);
       loadSkills();
     }
 

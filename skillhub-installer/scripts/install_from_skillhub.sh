@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SKILLHUB_URL="${SKILLHUB_URL:-http://localhost:17890}"
-SKILLHUB_API_KEY="${SKILLHUB_API_KEY:-skillhub-secret-key}"
+SKILLHUB_API_KEY="${SKILLHUB_API_KEY:-claw-skill-nest-secret-key}"
 SKILLS_DIR="$HOME/.openclaw/workspace/skills"
 
 mkdir -p "$SKILLS_DIR"
@@ -12,7 +12,7 @@ shift
 case "$command" in
   "安装")
     skill_name="$1"
-    echo "正在从 SkillHub 安装 skill: $skill_name"
+    echo "正在从 Claw Skill Nest 安装 skill: $skill_name"
     
     skills=$(curl -s -H "X-API-Key: $SKILLHUB_API_KEY" "$SKILLHUB_URL/api/skills")
     skill_id=$(echo "$skills" | grep -o '"id":"[^"]*","name":"'"$skill_name"'"' | head -n1 | cut -d'"' -f4)
@@ -56,7 +56,7 @@ case "$command" in
     ;;
   
   "列出")
-    echo "SkillHub 上的可用 skills:"
+    echo "Claw Skill Nest 上的可用 skills:"
     curl -s -H "X-API-Key: $SKILLHUB_API_KEY" "$SKILLHUB_URL/api/skills" | grep -o '"name":"[^"]*"' | cut -d'"' -f4 | sort
     ;;
   

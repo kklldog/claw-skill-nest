@@ -1,17 +1,17 @@
 version: '3.8'
 
 services:
-  skillhub:
+  claw-skill-nest:
     image: node:20-alpine
-    container_name: skillhub
+    container_name: claw-skill-nest
     working_dir: /app
     volumes:
       - .:/app
-      - skillhub_data:/app/data
+      - claw-skill-nest_data:/app/data
     ports:
       - "17890:17890"
     command: sh -c "npm install && node index.js --config=config.json"
     restart: unless-stopped
 
 volumes:
-  skillhub_data:
+  claw-skill-nest_data:

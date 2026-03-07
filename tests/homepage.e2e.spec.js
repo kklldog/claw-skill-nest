@@ -3,7 +3,7 @@ const path = require('node:path');
 
 test('首页可加载并可通过 UI 上传 skill', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Agile Skill Hub 管理后台' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Claw Skill Nest 管理后台' })).toBeVisible();
 
   await page.getByPlaceholder('输入 X-API-Key').fill('test-key');
   await page.getByRole('button', { name: '保存并刷新' }).click();

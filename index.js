@@ -24,7 +24,7 @@ function loadConfig() {
 
   return {
     port: process.env.PORT ?? fileConfig.port ?? 17890,
-    apiKey: process.env.API_KEY ?? fileConfig.apiKey ?? 'skillhub-secret-key',
+    apiKey: process.env.API_KEY ?? fileConfig.apiKey ?? 'claw-skill-nest-secret-key',
     dataDir: path.resolve(__dirname, process.env.DATA_DIR ?? fileConfig.dataDir ?? 'data')
   };
 }

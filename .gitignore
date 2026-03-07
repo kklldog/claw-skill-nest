@@ -1,1 +1,4 @@
 node_modules/
+.run.log
+.run.pid
+data/uploads/

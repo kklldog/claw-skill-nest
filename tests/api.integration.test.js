@@ -5,7 +5,7 @@ const os = require('node:os');
 const path = require('node:path');
 const request = require('supertest');
 
-const tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'skillhub-test-'));
+const tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'claw-skill-nest-test-'));
 process.env.DATA_DIR = tmpDataDir;
 process.env.API_KEY = 'test-key';
 

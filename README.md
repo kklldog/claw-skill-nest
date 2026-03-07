@@ -1,4 +1,4 @@
-# Agile Skill Hub
+# Claw Skill Nest
 
 OpenClaw 内部 Skill 管理中心
 
@@ -15,7 +15,7 @@ OpenClaw 内部 Skill 管理中心
 ### 本地运行
 
 ```bash
-cd agile-skill-hub
+cd claw-skill-nest
 npm install
 # 先编辑 config.json 里的 apiKey / port
 npm start
@@ -26,7 +26,7 @@ npm start
 ### 一键脚本（推荐）
 
 ```bash
-cd agile-skill-hub
+cd claw-skill-nest
 ./start.sh   # 一键启动
 ./stop.sh    # 一键关闭
 ```
@@ -40,7 +40,7 @@ cd agile-skill-hub
 docker-compose up -d
 ```
 
-服务将在 http://localhost:17890 启动，数据存储在 `skillhub_data` 持久卷中。
+服务将在 http://localhost:17890 启动，数据存储在 `claw-skill-nest_data` 持久卷中。
 
 ## API 文档
 

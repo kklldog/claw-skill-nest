@@ -19,10 +19,13 @@
 - `从本地 claw-skill-nest 安装 <name>`
 - `从 local claw-skill-nest 更新 <name>`
 
-## 脚本入口
+## 脚本入口（跨平台 TypeScript）
 
-- Linux/macOS: `scripts/install_from_claw_skill_nest.sh`
-- Windows (PowerShell): `scripts/install_from_claw_skill_nest.ps1`
+- 通用脚本：`scripts/install_from_claw_skill_nest.ts`
+- 运行方式（任意平台）：
+  - `npx tsx scripts/install_from_claw_skill_nest.ts 列出`
+  - `npx tsx scripts/install_from_claw_skill_nest.ts 安装 <name>`
+  - `npx tsx scripts/install_from_claw_skill_nest.ts 更新 <name>`
 
 ## 安装位置
 

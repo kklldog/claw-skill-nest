@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { mkdir, mkdtemp, rm, writeFile, copyFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, writeFile, copyFile, readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, extname } from 'node:path';
 import { homedir, tmpdir } from 'node:os';
@@ -54,6 +54,38 @@ async function downloadSkillFile(skillId: string): Promise<Buffer> {
   }
   const arr = await res.arrayBuffer();
   return Buffer.from(arr);
+}
+
+async function uploadSkill(localFilePath: string, skillName?: string, description?: string) {
+  if (!localFilePath) throw new Error('请提供本地文件路径');
+
+  const ext = extname(localFilePath).toLowerCase();
+  if (ext !== '.skill' && ext !== '.zip') {
+    throw new Error('仅支持 .skill 或 .zip 文件上传');
+  }
+
+  const fileBuf = await readFile(localFilePath);
+  const filename = localFilePath.split('/').pop() || `skill${ext}`;
+  const inferredName = filename.replace(/\.[^/.]+$/, '');
+
+  const form = new FormData();
+  form.append('file', new Blob([fileBuf]), filename);
+  form.append('name', skillName || inferredName);
+  if (description) form.append('description', description);
+
+  const res = await fetch(`${SKILLHUB_URL}/api/skills/upload`, {
+    method: 'POST',
+    headers: { 'X-API-Key': SKILLHUB_API_KEY },
+    body: form,
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`上传失败: ${res.status} ${res.statusText}${text ? ` - ${text}` : ''}`);
+  }
+
+  const uploaded = (await res.json()) as Skill;
+  console.log(`Skill ${uploaded.name} 上传成功 (id: ${uploaded.id})`);
 }
 
 async function extractZip(archivePath: string, targetDir: string): Promise<boolean> {
@@ -121,20 +153,28 @@ async function main() {
   await mkdir(SKILLS_DIR, { recursive: true });
 
   const command = process.argv[2];
-  const skillName = process.argv[3];
+  const arg1 = process.argv[3];
+  const arg2 = process.argv[4];
+  const arg3 = process.argv[5];
 
   switch (command) {
     case '安装':
-      await installSkill(skillName || '');
+      await installSkill(arg1 || '');
       break;
     case '更新':
-      await installSkill(skillName || '');
+      await installSkill(arg1 || '');
       break;
     case '列出':
       await listSkills();
       break;
+    case '上传':
+      await uploadSkill(arg1 || '', arg2, arg3);
+      break;
     default:
-      console.log('用法: node scripts/install_from_claw_skill_nest.ts {安装|更新|列出} [skill名称]');
+      console.log('用法: node scripts/install_from_claw_skill_nest.ts {安装|更新|列出|上传} [参数]');
+      console.log('  安装/更新: node scripts/install_from_claw_skill_nest.ts 安装 <skill名称>');
+      console.log('  列出:      node scripts/install_from_claw_skill_nest.ts 列出');
+      console.log('  上传:      node scripts/install_from_claw_skill_nest.ts 上传 <本地文件路径> [skill名称] [描述]');
       process.exitCode = 1;
   }
 }

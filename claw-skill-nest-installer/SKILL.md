@@ -16,8 +16,10 @@
 - `安装本地 skill <name>` / `install local skill <name>`
 - `更新本地 skill <name>` / `update local skill <name>`
 - `列出本地 skill` / `list local skills`
+- `上传本地 skill <file>` / `upload local skill <file>`
 - `从本地 claw-skill-nest 安装 <name>`
 - `从 local claw-skill-nest 更新 <name>`
+- `把这个 skill 上传到本地 claw-skill-nest`
 
 ## 脚本入口（跨平台 TypeScript）
 
@@ -26,6 +28,7 @@
   - `npx tsx scripts/install_from_claw_skill_nest.ts 列出`
   - `npx tsx scripts/install_from_claw_skill_nest.ts 安装 <name>`
   - `npx tsx scripts/install_from_claw_skill_nest.ts 更新 <name>`
+  - `npx tsx scripts/install_from_claw_skill_nest.ts 上传 <本地文件路径> [skill名称] [描述]`
 
 ## 安装位置
 

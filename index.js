@@ -6,9 +6,33 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
 const app = express();
-const PORT = process.env.PORT || 17890;
-const API_KEY = process.env.API_KEY || 'skillhub-secret-key';
-const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
+
+function loadConfig() {
+  const defaultConfigPath = path.join(__dirname, 'config.json');
+  const configArg = process.argv.find((arg) => arg.startsWith('--config='));
+  const rawConfigPath = configArg ? configArg.slice('--config='.length) : defaultConfigPath;
+  const configPath = path.isAbsolute(rawConfigPath) ? rawConfigPath : path.resolve(__dirname, rawConfigPath);
+
+  let fileConfig = {};
+  if (fs.existsSync(configPath)) {
+    try {
+      fileConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    } catch (err) {
+      throw new Error(`Failed to parse config file: ${configPath} (${err.message})`);
+    }
+  }
+
+  return {
+    port: process.env.PORT ?? fileConfig.port ?? 17890,
+    apiKey: process.env.API_KEY ?? fileConfig.apiKey ?? 'skillhub-secret-key',
+    dataDir: path.resolve(__dirname, process.env.DATA_DIR ?? fileConfig.dataDir ?? 'data')
+  };
+}
+
+const config = loadConfig();
+const PORT = config.port;
+const API_KEY = config.apiKey;
+const DATA_DIR = config.dataDir;
 const SKILLS_FILE = path.join(DATA_DIR, 'skills.json');
 const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
 

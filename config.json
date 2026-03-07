@@ -1,0 +1,5 @@
+{
+  "port": 17890,
+  "apiKey": "123456",
+  "dataDir": "data"
+}

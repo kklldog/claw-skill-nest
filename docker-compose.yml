@@ -10,10 +10,7 @@ services:
       - skillhub_data:/app/data
     ports:
       - "17890:17890"
-    environment:
-      - PORT=17890
-      - API_KEY=skillhub-secret-key
-    command: sh -c "npm install && npm start"
+    command: sh -c "npm install && node index.js --config=config.json"
     restart: unless-stopped
 
 volumes:

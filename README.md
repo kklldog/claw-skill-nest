@@ -17,10 +17,11 @@ OpenClaw 内部 Skill 管理中心
 ```bash
 cd agile-skill-hub
 npm install
+# 先编辑 config.json 里的 apiKey / port
 npm start
 ```
 
-访问 http://localhost:17890
+访问 `http://localhost:<config.json中的port>`（默认 17890）
 
 ### 一键脚本（推荐）
 
@@ -53,7 +54,22 @@ docker-compose up -d
 - `DELETE /api/skills/:id` - 删除 skill
 - `GET /api/skills/:id/download` - 下载 skill 文件
 
-## 环境变量
+## 配置文件（推荐）
 
-- `PORT` - 服务端口（默认 17890）
-- `API_KEY` - API 认证密钥（默认 skillhub-secret-key）
+默认读取 `config.json`：
+
+```json
+{
+  "port": 17890,
+  "apiKey": "change-this-to-a-strong-key",
+  "dataDir": "data"
+}
+```
+
+也支持启动时指定：
+
+```bash
+node index.js --config=./config.json
+```
+
+> 兼容保留：`PORT` / `API_KEY` / `DATA_DIR` 环境变量仍可作为回退值。

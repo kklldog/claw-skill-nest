@@ -171,10 +171,10 @@ async function main() {
       await uploadSkill(arg1 || '', arg2, arg3);
       break;
     default:
-      console.log('用法: node scripts/install_from_claw_skill_nest.ts {安装|更新|列出|上传} [参数]');
-      console.log('  安装/更新: node scripts/install_from_claw_skill_nest.ts 安装 <skill名称>');
-      console.log('  列出:      node scripts/install_from_claw_skill_nest.ts 列出');
-      console.log('  上传:      node scripts/install_from_claw_skill_nest.ts 上传 <本地文件路径> [skill名称] [描述]');
+      console.log('用法: node scripts/manage_local_claw_skill_nest.ts {安装|更新|列出|上传} [参数]');
+      console.log('  安装/更新: node scripts/manage_local_claw_skill_nest.ts 安装 <skill名称>');
+      console.log('  列出:      node scripts/manage_local_claw_skill_nest.ts 列出');
+      console.log('  上传:      node scripts/manage_local_claw_skill_nest.ts 上传 <本地文件路径> [skill名称] [描述]');
       process.exitCode = 1;
   }
 }

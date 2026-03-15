@@ -1,0 +1,17 @@
+{
+  "name": "qiniu-upload",
+  "version": "1.0.0",
+  "description": "Qiniu Cloud upload skill",
+  "main": "scripts/upload.ts",
+  "scripts": {
+    "upload": "tsx scripts/upload.ts"
+  },
+  "dependencies": {
+    "qiniu": "^7.15.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.5",
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.3"
+  }
+}

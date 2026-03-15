@@ -20,6 +20,7 @@
 - `从本地 claw-skill-nest 安装 <name>`
 - `从 local claw-skill-nest 更新 <name>`
 - `把这个 skill 上传到本地 claw-skill-nest`
+- `把这个 skill 上传到本地技能仓库`
 
 ## 脚本入口（跨平台 TypeScript）
 

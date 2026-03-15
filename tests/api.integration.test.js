@@ -20,6 +20,18 @@ test('GET /api/skills should require API key', async () => {
   assert.equal(res.status, 401);
 });
 
+test('GET /api/auth/verify should validate API key', async () => {
+  const okRes = await request(app)
+    .get('/api/auth/verify')
+    .set('X-API-Key', 'test-key');
+  assert.equal(okRes.status, 200);
+  assert.equal(okRes.body.ok, true);
+  assert.equal(okRes.body.appName, '虾滑');
+
+  const badRes = await request(app).get('/api/auth/verify');
+  assert.equal(badRes.status, 401);
+});
+
 test('upload -> list -> detail -> download -> delete lifecycle', async () => {
   const fixture = path.join(__dirname, 'fixtures', 'demo.skill');
 

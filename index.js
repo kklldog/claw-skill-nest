@@ -57,6 +57,7 @@ function saveSkills() {
 
 // Middleware
 app.use(cors());
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API Key auth middleware
@@ -92,6 +93,14 @@ const upload = multer({
 });
 
 // API Endpoints
+app.get('/api/auth/verify', apiKeyAuth, (req, res) => {
+  res.json({
+    ok: true,
+    appName: '虾滑',
+    description: 'OpenClaw 私有 Skill 管理中心'
+  });
+});
+
 app.get('/api/skills', apiKeyAuth, (req, res) => {
   res.json(skills);
 });

@@ -3,237 +3,904 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Claw Skill Nest Admin</title>
+  <title>虾滑 · Skill 管理中心</title>
   <style>
     :root {
-      --bg: #f4f6fb;
-      --card: #ffffff;
-      --text: #101828;
-      --muted: #667085;
-      --border: #e4e7ec;
-      --primary: #3b82f6;
-      --success: #16a34a;
-      --danger: #ef4444;
-      --shadow: 0 8px 30px rgba(16, 24, 40, 0.08);
-      --radius: 14px;
+      --primary: #1677ff;
+      --primary-hover: #4096ff;
+      --success: #52c41a;
+      --danger: #ff4d4f;
+      --text: rgba(0, 0, 0, 0.88);
+      --text-secondary: rgba(0, 0, 0, 0.65);
+      --text-tertiary: rgba(0, 0, 0, 0.45);
+      --border: #f0f0f0;
+      --border-strong: #d9d9d9;
+      --bg: #f5f7fa;
+      --shadow: 0 6px 16px rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+      --radius: 16px;
     }
 
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
-      background: linear-gradient(180deg, #f7f9ff 0%, var(--bg) 100%);
+      min-height: 100vh;
       color: var(--text);
-      padding: 28px;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(22, 119, 255, 0.15), transparent 26%),
+        radial-gradient(circle at top right, rgba(114, 46, 209, 0.12), transparent 22%),
+        linear-gradient(180deg, #f9fbff 0%, var(--bg) 100%);
     }
 
-    .container {
-      max-width: 1080px;
-      margin: 0 auto;
-      display: grid;
-      gap: 18px;
-    }
+    button, input, textarea, select { font: inherit; }
+    .hidden { display: none !important; }
 
-    .header {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px 24px;
-      box-shadow: var(--shadow);
-    }
+    .app-shell { min-height: 100vh; padding: 32px 20px; }
+    .center-wrap { width: 100%; max-width: 1180px; margin: 0 auto; }
 
-    .header h1 {
-      margin: 0;
-      font-size: 26px;
-      line-height: 1.2;
-    }
-
-    .sub {
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
+    .login-layout { min-height: calc(100vh - 64px); display: grid; place-items: center; }
+    .login-card,
     .panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 24px;
       box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
     }
 
-    .panel h2 {
-      margin: 0 0 14px;
-      font-size: 18px;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
+    .login-card { width: min(100%, 420px); padding: 36px; }
+    .brand-badge {
+      display: inline-flex;
       align-items: center;
-    }
-
-    .form-grid {
-      display: grid;
-      gap: 10px;
-      max-width: 640px;
-    }
-
-    input[type="text"],
-    textarea,
-    input[type="file"] {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 14px;
-      outline: none;
-      background: #fff;
-    }
-
-    input[type="text"]:focus,
-    textarea:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(59,130,246,.12);
-    }
-
-    .actions {
-      display: flex;
       gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(22, 119, 255, 0.08);
+      color: var(--primary);
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .login-title, .hero-title { margin: 0; letter-spacing: -0.02em; }
+    .login-title { font-size: 32px; font-weight: 800; }
+    .hero-title { font-size: 34px; line-height: 1.2; }
+
+    .hero-subtitle, .card-subtitle {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .hero-subtitle { margin: 12px 0 0; }
+    .card-subtitle { margin: 6px 0 0; }
+
+    .login-form, .upload-form { margin-top: 24px; display: grid; gap: 14px; }
+    .label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+
+    .input, .textarea, .file-input, .select {
+      width: 100%;
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: #fff;
+      color: var(--text);
+      transition: all .2s ease;
+    }
+
+    .input:focus, .textarea:focus, .file-input:focus, .select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(22, 119, 255, 0.15);
+    }
+
+    .textarea { min-height: 108px; resize: vertical; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 42px;
+      padding: 0 18px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all .2s ease;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .btn:disabled { cursor: not-allowed; opacity: .6; }
+    .btn-primary { color: #fff; background: var(--primary); box-shadow: 0 6px 14px rgba(22, 119, 255, 0.24); }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-default { background: #fff; border-color: var(--border-strong); color: var(--text); }
+    .btn-default:hover { color: var(--primary); border-color: var(--primary); }
+    .btn-danger { background: rgba(255, 77, 79, 0.08); color: var(--danger); border-color: rgba(255, 77, 79, 0.25); }
+    .btn-danger:hover { background: rgba(255, 77, 79, 0.12); }
+    .btn-block { width: 100%; }
+
+    .status-text { min-height: 22px; font-size: 13px; color: var(--text-tertiary); }
+    .status-text.error { color: var(--danger); }
+    .status-text.success { color: var(--success); }
+
+    .dashboard { display: grid; gap: 24px; }
+    .hero { display: grid; gap: 20px; }
+    .hero-card { padding: 28px; }
+
+    .topbar {
+      margin-top: 24px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
-    button {
-      border: none;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-weight: 600;
-      cursor: pointer;
-      color: #fff;
+    .hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
     }
 
-    .btn-primary { background: var(--primary); }
-    .btn-success { background: var(--success); }
-    .btn-danger { background: var(--danger); }
-
-    .skill-list {
-      display: grid;
+    .hero-actions {
+      display: flex;
+      align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      margin-left: auto;
+    }
+
+    .icon-link,
+    .icon-action {
+      width: 42px;
+      min-width: 42px;
+      height: 42px;
+      padding: 0;
+    }
+
+    .lang-switch {
+      min-width: 72px;
+      height: 42px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-strong);
+      background: #fff;
+      color: var(--text);
+    }
+
+    .icon-link svg,
+    .icon-action svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .hero-stats {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-item {
+      padding: 16px;
+      border-radius: 18px;
+      background: #fafafa;
+      border: 1px solid var(--border);
+    }
+
+    .stat-label { color: var(--text-tertiary); font-size: 12px; }
+    .stat-value { margin-top: 8px; font-size: 24px; font-weight: 800; }
+
+    .panel { padding: 24px; }
+    .card-title-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .card-title { margin: 0; font-size: 20px; }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      width: min(100%, 520px);
+    }
+
+    .sort-select { width: 180px; }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
     }
 
     .skill-card {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
       display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
+      gap: 14px;
+      min-height: 230px;
+      padding: 20px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+
+    .skill-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+      border-color: rgba(22, 119, 255, 0.28);
+    }
+
+    .skill-card-header { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+    .skill-name { margin: 0; font-size: 18px; font-weight: 700; line-height: 1.4; }
+    .tag {
+      display: inline-flex;
       align-items: center;
-      background: #fff;
-    }
-
-    .skill-title {
-      margin: 0 0 6px;
-      font-size: 16px;
+      justify-content: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(22, 119, 255, 0.08);
+      color: var(--primary);
+      font-size: 12px;
       font-weight: 700;
+      white-space: nowrap;
     }
 
-    .skill-meta {
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.4;
+    .skill-desc { margin: 0; color: var(--text-secondary); line-height: 1.7; font-size: 14px; flex: 1; }
+    .meta-list { display: grid; gap: 8px; }
+    .meta-item { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--text-secondary); }
+    .meta-item strong { color: var(--text); font-weight: 600; }
+    .skill-actions { display: flex; justify-content: flex-end; margin-top: auto; position: relative; }
+
+    .menu-wrap { position: relative; }
+    .menu-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--border-strong);
+      background: #fff;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 18px;
     }
 
-    .hint {
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 8px;
+    .menu-btn:hover {
+      color: var(--primary);
+      border-color: var(--primary);
     }
 
-    @media (max-width: 760px) {
-      body { padding: 14px; }
-      .row, .skill-card { grid-template-columns: 1fr; }
-      .actions { justify-content: flex-start; }
+    .menu {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      min-width: 132px;
+      padding: 6px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      display: none;
+      z-index: 10;
+    }
+
+    .menu.show { display: grid; gap: 4px; }
+    .menu-item {
+      width: 100%;
+      height: 38px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      text-align: left;
+      padding: 0 12px;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .menu-item:hover { background: #f5f7fa; }
+    .menu-item.danger { color: var(--danger); }
+
+    .empty-state {
+      padding: 48px 18px;
+      text-align: center;
+      color: var(--text-secondary);
+      border: 1px dashed var(--border-strong);
+      border-radius: 18px;
+      background: #fcfcfc;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      min-width: 240px;
+      max-width: min(420px, calc(100vw - 40px));
+      padding: 14px 16px;
+      border-radius: 14px;
+      color: #fff;
+      background: rgba(0,0,0,.82);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: all .25s ease;
+      z-index: 999;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { background: rgba(82, 196, 26, 0.95); }
+    .toast.error { background: rgba(255, 77, 79, 0.96); }
+
+    @media (max-width: 960px) {
+      .hero-stats { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .app-shell { padding: 16px; }
+      .login-card, .panel, .hero-card { padding: 20px; }
+      .hero-title { font-size: 28px; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .skill-actions .btn, .topbar .btn { width: 100%; }
+      .topbar { align-items: stretch; }
+      .hero-header { flex-direction: column; }
+      .hero-actions { width: 100%; justify-content: flex-start; }
+      .icon-link, .icon-action { width: 42px !important; }
+      .lang-switch { width: auto !important; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>Claw Skill Nest 管理后台</h1>
-      <div class="sub">内网私有 Skill 仓库 · 上传 / 查看 / 下载 / 删除</div>
-    </div>
+  <div class="app-shell">
+    <div class="center-wrap">
+      <section id="loginView" class="login-layout">
+        <div class="login-card">
+          <div class="brand-badge">🦐 虾滑</div>
+          <h1 class="login-title" data-i18n="login_title">登录</h1>
 
-    <div class="panel">
-      <h2>API Key 配置</h2>
-      <div class="row">
-        <input type="text" id="apiKey" placeholder="输入 X-API-Key">
-        <button class="btn-success" onclick="saveApiKey()">保存并刷新</button>
-      </div>
-      <div class="hint">Key 会保存在浏览器本地 localStorage。</div>
-    </div>
-
-    <div class="panel">
-      <h2>上传新 Skill</h2>
-      <div class="form-grid">
-        <input type="text" id="skillName" placeholder="Skill 名称（可选）">
-        <textarea id="skillDescription" placeholder="Skill 描述（可选）" rows="3"></textarea>
-        <input type="file" id="skillFile" accept=".skill,.zip">
-        <div class="actions">
-          <button class="btn-primary" onclick="uploadSkill()">上传 Skill</button>
+          <div class="login-form">
+            <div>
+              <label class="label" for="tokenInput" data-i18n="token_label">Token</label>
+              <input class="input" id="tokenInput" type="password" autocomplete="current-password" data-i18n-placeholder="token_placeholder" placeholder="请输入 Token">
+            </div>
+            <button id="loginBtn" class="btn btn-primary btn-block" onclick="handleLogin()" data-i18n="enter_button">进入</button>
+            <div id="loginStatus" class="status-text"></div>
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
 
-    <div class="panel">
-      <h2>已上传 Skills</h2>
-      <div id="skillsContainer" class="skill-list"></div>
+      <section id="dashboardView" class="dashboard hidden">
+        <div id="listView" class="hero">
+          <div class="hero-card panel">
+            <div class="hero-header">
+              <div>
+                <div class="brand-badge">🦐 虾滑</div>
+                <h1 class="hero-title" data-i18n="hero_title">本地 Skill 管理中心</h1>
+                <p class="hero-subtitle" data-i18n="hero_subtitle">查看、上传和管理本地 Skills。</p>
+              </div>
+              <div class="hero-actions">
+                <select id="langSwitch" class="lang-switch" onchange="changeLanguage(this.value)" aria-label="Language">
+                  <option value="zh-CN">中文</option>
+                  <option value="en">EN</option>
+                </select>
+                <a class="btn btn-default icon-link" href="https://github.com/kklldog/claw-skill-nest" target="_blank" rel="noreferrer" aria-label="GitHub 仓库" title="GitHub 仓库" data-i18n-title="github_repo">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 .5C5.649.5.5 5.649.5 12a11.5 11.5 0 0 0 7.861 10.913c.575.105.786-.25.786-.556 0-.274-.01-1-.015-1.962-3.198.695-3.873-1.54-3.873-1.54-.523-1.328-1.277-1.682-1.277-1.682-1.044-.714.079-.7.079-.7 1.155.081 1.763 1.186 1.763 1.186 1.026 1.758 2.692 1.251 3.348.956.104-.743.402-1.251.731-1.539-2.553-.29-5.238-1.277-5.238-5.683 0-1.255.449-2.281 1.184-3.085-.119-.29-.513-1.458.112-3.04 0 0 .965-.309 3.163 1.178a10.982 10.982 0 0 1 5.758 0c2.196-1.487 3.16-1.178 3.16-1.178.627 1.582.233 2.75.114 3.04.737.804 1.182 1.83 1.182 3.085 0 4.417-2.689 5.389-5.252 5.673.414.357.783 1.061.783 2.139 0 1.545-.014 2.792-.014 3.172 0 .309.207.667.792.554A11.502 11.502 0 0 0 23.5 12C23.5 5.649 18.351.5 12 .5Z"/>
+                  </svg>
+                </a>
+                <button class="btn btn-default icon-action" onclick="logout()" aria-label="退出登录" title="退出登录" data-i18n-title="logout">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M10 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4v-2H6V5h4V3Zm7.586 8-2.793-2.793 1.414-1.414L21.414 12l-5.207 5.207-1.414-1.414L17.586 13H9v-2h8.586Z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="hero-stats">
+              <div class="stat-item">
+                <div class="stat-label" data-i18n="skills_label">Skills</div>
+                <div class="stat-value" id="skillCount">0</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label" data-i18n="size_label">容量</div>
+                <div class="stat-value" id="totalSize">0 KB</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label" data-i18n="status_label">状态</div>
+                <div class="stat-value" id="onlineStatus" style="font-size: 18px;" data-i18n="online">在线</div>
+              </div>
+            </div>
+
+            <div class="topbar">
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn btn-primary icon-action" onclick="showUploadView()" aria-label="上传 Skill" title="上传 Skill" data-i18n-title="upload_skill">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2h6Z"/>
+                  </svg>
+                </button>
+                <button class="btn btn-default icon-action" onclick="loadSkills()" aria-label="刷新" title="刷新" data-i18n-title="refresh">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 6V3L8 7l4 4V8c2.757 0 5 2.243 5 5 0 .551.449 1 1 1s1-.449 1-1c0-3.86-3.141-7-7-7Zm-5 4c-.551 0-1 .449-1 1 0 3.859 3.141 7 7 7v3l4-4-4-4v3c-2.757 0-5-2.243-5-5 0-.551-.449-1-1-1Z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div id="dashboardStatus" class="status-text"></div>
+          </div>
+        </div>
+
+        <section id="skillsPanel" class="panel">
+          <div class="card-title-row toolbar">
+            <div>
+              <h2 class="card-title" data-i18n="skills_title">Skills</h2>
+              <p class="card-subtitle" data-i18n="card_view">卡片视图</p>
+            </div>
+            <div class="toolbar-right">
+              <select class="select sort-select" id="sortSelect" onchange="handleSearch()">
+                <option value="time-desc" data-i18n="sort_latest">最新上传</option>
+                <option value="time-asc" data-i18n="sort_oldest">最早上传</option>
+                <option value="name-asc" data-i18n="sort_name_asc">名称 A-Z</option>
+                <option value="name-desc" data-i18n="sort_name_desc">名称 Z-A</option>
+                <option value="size-desc" data-i18n="sort_size_desc">大小从大到小</option>
+                <option value="size-asc" data-i18n="sort_size_asc">大小从小到大</option>
+              </select>
+              <input class="input" style="flex:1; min-width:220px;" type="text" id="searchInput" oninput="handleSearch()" data-i18n-placeholder="search_placeholder" placeholder="搜索名称、描述或文件名">
+            </div>
+          </div>
+          <div id="skillsContainer" class="skills-grid"></div>
+        </section>
+
+        <section id="uploadView" class="panel hidden">
+          <div class="card-title-row">
+            <div>
+              <h2 class="card-title" data-i18n="upload_title">上传 Skill</h2>
+              <p class="card-subtitle" data-i18n="upload_subtitle">支持 .skill 和 .zip</p>
+            </div>
+            <button class="btn btn-default" onclick="showListView()" data-i18n="back_to_list">返回列表</button>
+          </div>
+
+          <div class="upload-form">
+            <div>
+              <label class="label" for="skillName" data-i18n="name_label">名称</label>
+              <input class="input" type="text" id="skillName" data-i18n-placeholder="name_placeholder" placeholder="请输入名称">
+            </div>
+            <div>
+              <label class="label" for="skillDescription" data-i18n="desc_label">描述</label>
+              <textarea class="textarea" id="skillDescription" data-i18n-placeholder="desc_placeholder" placeholder="请输入描述"></textarea>
+            </div>
+            <div>
+              <label class="label" for="skillFile" data-i18n="file_label">文件</label>
+              <input class="file-input" type="file" id="skillFile" accept=".skill,.zip">
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="uploadSkill()" data-i18n="upload_button">上传</button>
+              <button class="btn btn-default" onclick="showListView()" data-i18n="cancel_button">取消</button>
+            </div>
+          </div>
+        </section>
+      </section>
     </div>
   </div>
 
-  <script>
-    let apiKey = localStorage.getItem('claw-skill-nest_api_key') || '';
-    document.getElementById('apiKey').value = apiKey;
+  <div id="toast" class="toast"></div>
 
-    function saveApiKey() {
-      apiKey = document.getElementById('apiKey').value.trim();
-      localStorage.setItem('claw-skill-nest_api_key', apiKey);
-      loadSkills();
+  <script>
+    const STORAGE_KEY = 'xiashua_access_token';
+    const LANG_KEY = 'xiashua_lang';
+    const messages = {
+      'zh-CN': {
+        page_title: '虾滑 · Skill 管理中心',
+        login_title: '登录',
+        token_label: 'Token',
+        token_placeholder: '请输入 Token',
+        enter_button: '进入',
+        verifying: '验证中...',
+        verifying_status: '正在验证...',
+        token_required: '请输入 Token',
+        token_invalid: 'Token 错误',
+        verify_failed: '校验失败',
+        login_success: '登录成功',
+        logout_success: '已退出登录',
+        hero_title: '本地 Skill 管理中心',
+        hero_subtitle: '查看、上传和管理本地 Skills。',
+        github_repo: 'GitHub 仓库',
+        logout: '退出登录',
+        upload_skill: '上传 Skill',
+        refresh: '刷新',
+        skills_label: 'Skills',
+        size_label: '容量',
+        status_label: '状态',
+        online: '在线',
+        skills_title: 'Skills',
+        card_view: '卡片视图',
+        search_placeholder: '搜索名称、描述或文件名',
+        sort_latest: '最新上传',
+        sort_oldest: '最早上传',
+        sort_name_asc: '名称 A-Z',
+        sort_name_desc: '名称 Z-A',
+        sort_size_desc: '大小从大到小',
+        sort_size_asc: '大小从小到大',
+        upload_title: '上传 Skill',
+        upload_subtitle: '支持 .skill 和 .zip',
+        back_to_list: '返回列表',
+        name_label: '名称',
+        name_placeholder: '请输入名称',
+        desc_label: '描述',
+        desc_placeholder: '请输入描述',
+        file_label: '文件',
+        upload_button: '上传',
+        cancel_button: '取消',
+        refreshing: '刷新中...',
+        loading_failed: '加载失败',
+        expired: '登录已失效',
+        select_file: '请选择文件',
+        please_login: '请先登录',
+        uploading: '上传中...',
+        upload_failed: '上传失败',
+        upload_done: '上传成功',
+        download_failed: '下载失败',
+        delete_failed: '删除失败',
+        delete_done: '删除成功',
+        empty_match: '暂无匹配结果',
+        empty_skills: '暂无 Skill',
+        unnamed_skill: '未命名 Skill',
+        no_description: '暂无描述',
+        file_meta: '文件',
+        time_meta: '时间',
+        size_meta: '大小',
+        menu_download: '下载',
+        menu_delete: '删除',
+        delete_confirm: '确定删除「{name}」吗？'
+      },
+      en: {
+        page_title: 'Xiashua · Skill Hub',
+        login_title: 'Login',
+        token_label: 'Token',
+        token_placeholder: 'Enter token',
+        enter_button: 'Enter',
+        verifying: 'Verifying...',
+        verifying_status: 'Verifying...',
+        token_required: 'Please enter token',
+        token_invalid: 'Invalid token',
+        verify_failed: 'Verification failed',
+        login_success: 'Logged in',
+        logout_success: 'Logged out',
+        hero_title: 'Local Skill Management Center',
+        hero_subtitle: 'Browse, upload, and manage local skills.',
+        github_repo: 'GitHub Repository',
+        logout: 'Logout',
+        upload_skill: 'Upload Skill',
+        refresh: 'Refresh',
+        skills_label: 'Skills',
+        size_label: 'Size',
+        status_label: 'Status',
+        online: 'Online',
+        skills_title: 'Skills',
+        card_view: 'Card view',
+        search_placeholder: 'Search by name, description, or filename',
+        sort_latest: 'Newest first',
+        sort_oldest: 'Oldest first',
+        sort_name_asc: 'Name A-Z',
+        sort_name_desc: 'Name Z-A',
+        sort_size_desc: 'Size: large to small',
+        sort_size_asc: 'Size: small to large',
+        upload_title: 'Upload Skill',
+        upload_subtitle: 'Supports .skill and .zip',
+        back_to_list: 'Back to list',
+        name_label: 'Name',
+        name_placeholder: 'Enter name',
+        desc_label: 'Description',
+        desc_placeholder: 'Enter description',
+        file_label: 'File',
+        upload_button: 'Upload',
+        cancel_button: 'Cancel',
+        refreshing: 'Refreshing...',
+        loading_failed: 'Load failed',
+        expired: 'Session expired',
+        select_file: 'Please select a file',
+        please_login: 'Please log in first',
+        uploading: 'Uploading...',
+        upload_failed: 'Upload failed',
+        upload_done: 'Upload succeeded',
+        download_failed: 'Download failed',
+        delete_failed: 'Delete failed',
+        delete_done: 'Deleted',
+        empty_match: 'No matching skills',
+        empty_skills: 'No skills yet',
+        unnamed_skill: 'Unnamed Skill',
+        no_description: 'No description',
+        file_meta: 'File',
+        time_meta: 'Time',
+        size_meta: 'Size',
+        menu_download: 'Download',
+        menu_delete: 'Delete',
+        delete_confirm: 'Delete “{name}”?'
+      }
+    };
+
+    let currentLang = localStorage.getItem(LANG_KEY) || 'zh-CN';
+    let apiKey = localStorage.getItem(STORAGE_KEY) || '';
+
+    const loginView = document.getElementById('loginView');
+    const dashboardView = document.getElementById('dashboardView');
+    const listView = document.getElementById('listView');
+    const skillsPanel = document.getElementById('skillsPanel');
+    const uploadView = document.getElementById('uploadView');
+    const tokenInput = document.getElementById('tokenInput');
+    const loginStatus = document.getElementById('loginStatus');
+    const dashboardStatus = document.getElementById('dashboardStatus');
+    const skillsContainer = document.getElementById('skillsContainer');
+    const skillCount = document.getElementById('skillCount');
+    const totalSize = document.getElementById('totalSize');
+    const searchInput = document.getElementById('searchInput');
+    const sortSelect = document.getElementById('sortSelect');
+    const langSwitch = document.getElementById('langSwitch');
+    const loginBtn = document.getElementById('loginBtn');
+    let allSkills = [];
+
+    tokenInput.value = apiKey;
+
+    function t(key, vars = {}) {
+      const pack = messages[currentLang] || messages['zh-CN'];
+      let text = pack[key] ?? messages['zh-CN'][key] ?? key;
+      for (const [name, value] of Object.entries(vars)) {
+        text = text.replaceAll(`{${name}}`, value);
+      }
+      return text;
+    }
+
+    function applyI18n() {
+      document.documentElement.lang = currentLang === 'en' ? 'en' : 'zh-CN';
+      document.title = t('page_title');
+      document.querySelectorAll('[data-i18n]').forEach((el) => {
+        el.textContent = t(el.dataset.i18n);
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+        el.placeholder = t(el.dataset.i18nPlaceholder);
+      });
+      document.querySelectorAll('[data-i18n-title]').forEach((el) => {
+        const title = t(el.dataset.i18nTitle);
+        el.title = title;
+        if (el.getAttribute('aria-label')) el.setAttribute('aria-label', title);
+      });
+      if (loginBtn && !loginBtn.disabled) loginBtn.textContent = t('enter_button');
+      if (langSwitch) langSwitch.value = currentLang;
+      renderSkills(sortAndFilterSkills());
+    }
+
+    function changeLanguage(lang) {
+      currentLang = messages[lang] ? lang : 'zh-CN';
+      localStorage.setItem(LANG_KEY, currentLang);
+      applyI18n();
+    }
+
+    function setStatus(el, text = '', type = '') {
+      if (!el) return;
+      el.textContent = text;
+      el.className = 'status-text' + (type ? ` ${type}` : '');
+    }
+
+    function showToast(message, type = '') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show' + (type ? ` ${type}` : '');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.className = 'toast', 2600);
+    }
+
+    function showView(isLoggedIn) {
+      loginView.classList.toggle('hidden', isLoggedIn);
+      dashboardView.classList.toggle('hidden', !isLoggedIn);
+      if (isLoggedIn) showListView();
+    }
+
+    function showListView() {
+      listView.classList.remove('hidden');
+      skillsPanel.classList.remove('hidden');
+      uploadView.classList.add('hidden');
+      history.replaceState(null, '', '#skills');
+    }
+
+    function showUploadView() {
+      listView.classList.add('hidden');
+      skillsPanel.classList.add('hidden');
+      uploadView.classList.remove('hidden');
+      history.replaceState(null, '', '#upload');
+    }
+
+    async function verifyToken(candidate) {
+      const res = await fetch('/api/auth/verify', { headers: { 'X-API-Key': candidate } });
+      if (!res.ok) {
+        throw new Error(res.status === 401 ? t('token_invalid') : t('verify_failed'));
+      }
+      return res.json();
+    }
+
+    async function handleLogin() {
+      const candidate = tokenInput.value.trim();
+      if (!candidate) {
+        setStatus(loginStatus, t('token_required'), 'error');
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = t('verifying');
+      setStatus(loginStatus, t('verifying_status'));
+
+      try {
+        await verifyToken(candidate);
+        apiKey = candidate;
+        localStorage.setItem(STORAGE_KEY, apiKey);
+        setStatus(loginStatus, t('login_success'), 'success');
+        showView(true);
+        showToast(t('login_success'), 'success');
+        await loadSkills();
+      } catch (err) {
+        setStatus(loginStatus, err.message, 'error');
+        showToast(err.message, 'error');
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = t('enter_button');
+      }
+    }
+
+    function logout() {
+      apiKey = '';
+      allSkills = [];
+      localStorage.removeItem(STORAGE_KEY);
+      tokenInput.value = '';
+      if (searchInput) searchInput.value = '';
+      skillsContainer.innerHTML = '';
+      skillCount.textContent = '0';
+      totalSize.textContent = '0 KB';
+      setStatus(loginStatus, t('logout_success'));
+      setStatus(dashboardStatus, '');
+      showView(false);
+      history.replaceState(null, '', '#login');
+      showToast(t('logout_success'));
+    }
+
+    function formatSize(size = 0) {
+      if (size >= 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+      if (size >= 1024) return `${Math.ceil(size / 1024)} KB`;
+      return `${size} B`;
+    }
+
+    function escapeHtml(value = '') {
+      return value
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function renderSkills(skills) {
+      skillCount.textContent = String(allSkills.length);
+      totalSize.textContent = formatSize(allSkills.reduce((sum, skill) => sum + (skill.size || 0), 0));
+
+      if (!skills.length) {
+        skillsContainer.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;">${escapeHtml(allSkills.length ? t('empty_match') : t('empty_skills'))}</div>`;
+        return;
+      }
+
+      skillsContainer.innerHTML = skills.map((skill) => {
+        const ext = (skill.originalName || '').split('.').pop()?.toUpperCase() || 'FILE';
+        const safeName = escapeHtml(skill.name || t('unnamed_skill'));
+        return `
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <div><h3 class="skill-name">${escapeHtml(skill.name || t('unnamed_skill'))}</h3></div>
+              <span class="tag">${escapeHtml(ext)}</span>
+            </div>
+            <p class="skill-desc">${escapeHtml(skill.description || t('no_description'))}</p>
+            <div class="meta-list">
+              <div class="meta-item"><span>${escapeHtml(t('file_meta'))}</span><strong>${escapeHtml(skill.originalName || '-')}</strong></div>
+              <div class="meta-item"><span>${escapeHtml(t('time_meta'))}</span><strong>${escapeHtml(new Date(skill.uploadedAt).toLocaleString(currentLang === 'en' ? 'en-US' : 'zh-CN'))}</strong></div>
+              <div class="meta-item"><span>${escapeHtml(t('size_meta'))}</span><strong>${escapeHtml(formatSize(skill.size || 0))}</strong></div>
+            </div>
+            <div class="skill-actions">
+              <div class="menu-wrap">
+                <button class="menu-btn" type="button" onclick="toggleMenu(event, '${skill.id}')">⋯</button>
+                <div class="menu" id="menu-${skill.id}">
+                  <button class="menu-item" type="button" onclick="downloadSkill('${skill.id}'); closeAllMenus();">${escapeHtml(t('menu_download'))}</button>
+                  <button class="menu-item danger" type="button" onclick="deleteSkill('${skill.id}', '${safeName}'); closeAllMenus();">${escapeHtml(t('menu_delete'))}</button>
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function sortSkills(skills) {
+      const mode = sortSelect?.value || 'time-desc';
+      const sorted = [...skills];
+      sorted.sort((a, b) => {
+        switch (mode) {
+          case 'time-asc':
+            return new Date(a.uploadedAt) - new Date(b.uploadedAt);
+          case 'name-asc':
+            return String(a.name || '').localeCompare(String(b.name || ''), currentLang === 'en' ? 'en' : 'zh-CN');
+          case 'name-desc':
+            return String(b.name || '').localeCompare(String(a.name || ''), currentLang === 'en' ? 'en' : 'zh-CN');
+          case 'size-desc':
+            return (b.size || 0) - (a.size || 0);
+          case 'size-asc':
+            return (a.size || 0) - (b.size || 0);
+          case 'time-desc':
+          default:
+            return new Date(b.uploadedAt) - new Date(a.uploadedAt);
+        }
+      });
+      return sorted;
+    }
+
+    function sortAndFilterSkills() {
+      const keyword = (searchInput?.value || '').trim().toLowerCase();
+      const filtered = !keyword
+        ? [...allSkills]
+        : allSkills.filter((skill) => {
+            const haystack = [skill.name, skill.description, skill.originalName]
+              .filter(Boolean)
+              .join(' ')
+              .toLowerCase();
+            return haystack.includes(keyword);
+          });
+      return sortSkills(filtered);
+    }
+
+    function handleSearch() {
+      renderSkills(sortAndFilterSkills());
+    }
+
+    function closeAllMenus() {
+      document.querySelectorAll('.menu.show').forEach((menu) => menu.classList.remove('show'));
+    }
+
+    function toggleMenu(event, id) {
+      event.stopPropagation();
+      const menu = document.getElementById(`menu-${id}`);
+      const isOpen = menu?.classList.contains('show');
+      closeAllMenus();
+      if (menu && !isOpen) menu.classList.add('show');
     }
 
     async function loadSkills() {
-      const container = document.getElementById('skillsContainer');
       if (!apiKey) {
-        container.innerHTML = '<p class="hint">请先填写并保存 API Key。</p>';
+        showView(false);
         return;
       }
+
+      setStatus(dashboardStatus, t('refreshing'));
       try {
         const res = await fetch('/api/skills', { headers: { 'X-API-Key': apiKey } });
-        if (!res.ok) throw new Error('加载失败（请检查 API Key）');
-        const skills = await res.json();
-
-        if (!skills.length) {
-          container.innerHTML = '<p class="hint">暂时没有上传的 Skill。</p>';
+        if (res.status === 401) {
+          logout();
+          setStatus(loginStatus, t('expired'), 'error');
           return;
         }
+        if (!res.ok) throw new Error(t('loading_failed'));
 
-        container.innerHTML = skills.map(skill => `
-          <div class="skill-card">
-            <div>
-              <h3 class="skill-title">${skill.name}</h3>
-              <p class="skill-meta">${skill.description || '无描述'}</p>
-              <p class="skill-meta">上传时间：${new Date(skill.uploadedAt).toLocaleString()} · 大小：${Math.ceil((skill.size || 0) / 1024)} KB</p>
-            </div>
-            <div class="actions">
-              <button class="btn-success" onclick="downloadSkill('${skill.id}')">下载</button>
-              <button class="btn-danger" onclick="deleteSkill('${skill.id}')">删除</button>
-            </div>
-          </div>
-        `).join('');
+        allSkills = await res.json();
+        handleSearch();
+        setStatus(dashboardStatus, '', 'success');
       } catch (err) {
-        container.innerHTML = '<p style="color:#ef4444">' + err.message + '</p>';
+        setStatus(dashboardStatus, err.message, 'error');
+        skillsContainer.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1; color: var(--danger);">${escapeHtml(err.message)}</div>`;
       }
     }
 
@@ -243,35 +910,60 @@
       const fileInput = document.getElementById('skillFile');
       const file = fileInput.files[0];
 
-      if (!apiKey) return alert('请先填写 API Key');
-      if (!file) return alert('请选择文件');
+      if (!apiKey) {
+        showToast(t('please_login'), 'error');
+        showView(false);
+        return;
+      }
+      if (!file) {
+        showToast(t('select_file'), 'error');
+        return;
+      }
 
       const formData = new FormData();
       formData.append('file', file);
       if (name) formData.append('name', name);
       if (description) formData.append('description', description);
 
+      setStatus(dashboardStatus, t('uploading'));
       try {
         const res = await fetch('/api/skills/upload', {
           method: 'POST',
           headers: { 'X-API-Key': apiKey },
           body: formData
         });
-        if (!res.ok) throw new Error('上传失败');
-        alert('上传成功');
+
+        if (res.status === 401) {
+          logout();
+          setStatus(loginStatus, t('expired'), 'error');
+          return;
+        }
+
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(payload.error || t('upload_failed'));
+
         document.getElementById('skillName').value = '';
         document.getElementById('skillDescription').value = '';
         fileInput.value = '';
-        loadSkills();
+        showToast(t('upload_done'), 'success');
+        showListView();
+        await loadSkills();
       } catch (err) {
-        alert(err.message);
+        setStatus(dashboardStatus, err.message, 'error');
+        showToast(err.message, 'error');
       }
     }
 
     async function downloadSkill(id) {
       try {
         const res = await fetch(`/api/skills/${id}/download`, { headers: { 'X-API-Key': apiKey } });
-        if (!res.ok) throw new Error('下载失败');
+        if (res.status === 401) {
+          logout();
+          setStatus(loginStatus, t('expired'), 'error');
+          return;
+        }
+        if (!res.ok) throw new Error(t('download_failed'));
+
         const blob = await res.blob();
         const contentDisposition = res.headers.get('Content-Disposition') || '';
         const match = contentDisposition.match(/filename="?([^\"]+)"?/);
@@ -285,25 +977,55 @@
         a.remove();
         URL.revokeObjectURL(url);
       } catch (err) {
-        alert(err.message);
+        showToast(err.message, 'error');
       }
     }
 
-    async function deleteSkill(id) {
-      if (!confirm('确定删除这个 Skill 吗？')) return;
+    async function deleteSkill(id, name) {
+      if (!confirm(t('delete_confirm', { name }))) return;
       try {
         const res = await fetch(`/api/skills/${id}`, {
           method: 'DELETE',
           headers: { 'X-API-Key': apiKey }
         });
-        if (!res.ok) throw new Error('删除失败');
-        loadSkills();
+        if (res.status === 401) {
+          logout();
+          setStatus(loginStatus, t('expired'), 'error');
+          return;
+        }
+        if (!res.ok) {
+          const payload = await res.json().catch(() => ({}));
+          throw new Error(payload.error || t('delete_failed'));
+        }
+        showToast(t('delete_done'), 'success');
+        await loadSkills();
       } catch (err) {
-        alert(err.message);
+        showToast(err.message, 'error');
       }
     }
 
-    loadSkills();
+    document.addEventListener('click', closeAllMenus);
+    applyI18n();
+
+    (async function bootstrap() {
+      if (!apiKey) {
+        history.replaceState(null, '', '#login');
+        showView(false);
+        return;
+      }
+
+      try {
+        await verifyToken(apiKey);
+        showView(true);
+        if (location.hash === '#upload') showUploadView();
+        await loadSkills();
+      } catch (_) {
+        localStorage.removeItem(STORAGE_KEY);
+        apiKey = '';
+        history.replaceState(null, '', '#login');
+        showView(false);
+      }
+    })();
   </script>
 </body>
 </html>

@@ -1,13 +1,15 @@
-# Claw Skill Nest
+# 虾滑（Claw Skill Nest）
 
-OpenClaw 内部 Skill 管理中心
+OpenClaw 内部 Skill 管理中心，现已升级为更接近 Ant Design 风格的可视化后台。
 
 ## 功能特性
 
 - Express 后端 + 静态 HTML 管理界面
-- API Key 认证（X-API-Key 请求头）
+- Token 登录页校验（基于 `X-API-Key`）
+- Ant Design 风格视觉重构
 - Skill 上传、下载、删除、列表
-- 支持 .skill 和 .zip 文件
+- 已有 Skills 使用 Card 样式展示
+- 支持 `.skill` 和 `.zip` 文件
 - 磁盘存储 + JSON 元数据持久化
 
 ## 快速开始
